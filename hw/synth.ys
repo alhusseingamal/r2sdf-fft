@@ -1,0 +1,30 @@
+# 1. Read all Verilog design files
+# We use -sv to enable SystemVerilog features (like packed arrays)
+# Include the directory for the header files so `include works
+read_verilog -sv -Irtl/include rtl/butterfly/complex_adder.v
+read_verilog -sv -Irtl/include rtl/butterfly/complex_subtractor.v
+read_verilog -sv -Irtl/include rtl/butterfly/complex_multiplier.v
+read_verilog -sv -Irtl/include rtl/butterfly/butterfly.v
+read_verilog -sv -Irtl/include rtl/sdf_stages/circular_buffer.v
+read_verilog -sv -Irtl/include rtl/sdf_stages/sdf_stage.v
+read_verilog -sv -Irtl/include rtl/twiddle_rom/twiddle_rom.v
+read_verilog -sv -Irtl/include rtl/top_level.v
+
+# 2. Check the design hierarchy and define the top module
+hierarchy -check -top top_level
+
+# 3. Perform a generic high-level synthesis
+# This maps the design to generic logic gates, LUTs, and Flip-Flops
+#synth -top top_level       # Generic Gate-Level Synthesis
+synth_xilinx -top top_level # synthesis to xilinx architecture
+
+# 4. (Optional) Advanced Optimization passes
+# opt_clean cleans up unused wires and cells
+opt_clean -purge
+
+# 5. Print out the area statistics (How many LUTs and Registers?)
+stat
+
+# 6. (Optional) Generate an SVG schematic of the top level
+# Uncomment this if you have Graphviz installed and want a visual diagram!
+# show -format svg -prefix fft_schematic top_level

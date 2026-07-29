@@ -1,0 +1,22 @@
+// clean hw directory
+make clean
+// compile and run verilog
+make run
+
+// asic flow:
+./run_openlane.sh
+cat runs/RUN_2026.06.02_02.01.53/logs/synthesis/linter.log
+
+
+
+// generate test vectors
+python3 scripts/gen_test_vectors.py
+// run python model
+python3 scripts/run_simulation.py
+
+// i left the project at a state where
+- i was trying to modify run_simulation.py to make it robust against different combinations of the values of N and M
+    the file run_simulations.py in dump directory contains some of the needed adjustments, but it needs some work (if it is even worth it to start with!)
+- the SQNR in the hw model is about 36~40 and this is expected
+    due to the sharp rounding and trmming done inside the multipler/adder/subtractor modules of the butterfly
+    The standard way to increase this is by using more silicon
