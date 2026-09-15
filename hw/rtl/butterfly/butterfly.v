@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 module butterfly #(parameter W = 16, parameter F = 8) (
 input signed [W-1:0] a_real, a_imag, 
 input signed [W-1:0] b_real, b_imag, 

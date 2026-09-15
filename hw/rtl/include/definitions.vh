@@ -4,7 +4,7 @@
 `define TWIDDLE_WIDTH   16
 
 // Fixed Point Parameters
-`define FRACTIONAL_BITS 8
+`define FRACTIONAL_BITS 14
 
 // Useful constants
 `define PI              3.14159265358979
@@ -13,7 +13,7 @@
 `define ENABLE_DEBUG    0
 
 // Input Stream
-`define M 8
-`define TWIDDLE_FACTORS_FILE "/mnt/data1/DV/projects/fft/data/stimulus/twiddle.hex"
-`define INPUT_STREAM_FILE   "/mnt/data1/DV/projects/fft/data/stimulus/input_stream.hex"
-`define GOLDEN_OUTPUT_FILE   "/mnt/data1/DV/projects/fft/data/golden/expected_output.txt"
+`define M 1024
+`define TWIDDLE_FACTORS_FILE "../../data/stimulus/twiddle.hex"
+`define INPUT_STREAM_FILE   "../../data/stimulus/input_stream.hex"
+`define GOLDEN_OUTPUT_FILE   "../../data/golden/expected_output.txt"

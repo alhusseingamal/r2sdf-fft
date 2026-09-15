@@ -33,7 +33,7 @@ def plot_frequency_domain(fft_data, fs=1.0, title="FFT Magnitude"):
 
     plt.figure(figsize=(12, 6))
     plt.plot(freqs[pos], mag_db, linewidth=2)
-    plt.xlabel("Frequency (Hz)")
+    plt.xlabel("Normalized Frequency (cycles/sample)")
     plt.ylabel("Magnitude (dB)")
     plt.title(title)
     plt.grid(True, alpha=0.3)
@@ -58,7 +58,7 @@ def plot_fft_comparison(golden_fft, fixed_fft, fs=1.0, title="FFT Comparison"):
     plt.plot(freqs[pos], golden_mag, label="Golden FFT", linewidth=2)
     plt.plot(freqs[pos], fixed_mag, label="Fixed-Point FFT", linewidth=2)
 
-    plt.xlabel("Frequency (Hz)")
+    plt.xlabel("Normalized Frequency (cycles/sample)")
     plt.ylabel("Magnitude (dB)")
     plt.title(title)
     plt.legend()
@@ -67,7 +67,7 @@ def plot_fft_comparison(golden_fft, fixed_fft, fs=1.0, title="FFT Comparison"):
     plt.show()
 
 # ------------------------------------------------------------
-# 4. OVERLAY SPECTRUM (your earlier version)
+# 4. OVERLAY SPECTRUM
 # ------------------------------------------------------------
 def plot_spectrum(golden_fft, fixed_fft, fs=1.0, title="FFT Spectrum"):
     """
@@ -85,7 +85,7 @@ def plot_spectrum(golden_fft, fixed_fft, fs=1.0, title="FFT Spectrum"):
     plt.plot(freqs[pos], golden_mag, label='Golden (Float)', linewidth=2, alpha=0.8)
     plt.plot(freqs[pos], fixed_mag,  label='Fixed-Point', linewidth=2, alpha=0.8)
 
-    plt.xlabel('Frequency (Hz)')
+    plt.xlabel('Normalized Frequency (cycles/sample)')
     plt.ylabel('Magnitude (dB)')
     plt.title(title)
     plt.legend()

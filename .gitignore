@@ -1,1 +1,9 @@
 /python_model/venv
+/hw/sim/
+/.vscode
+**/__pycache__/
+**/.venv/
+/dump
+/asic
+/writeup.md
+/commands.txt

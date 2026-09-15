@@ -9,9 +9,6 @@ localparam F = `FRACTIONAL_BITS;
 
 localparam CLK_PERIOD = 20;
 
-// 1.0 in Q8.8 fixed-point format is 256 (1 << 8)
-localparam signed [W-1:0] ONE_FP = 16'd256; 
-
 reg clk;
 reg reset_n;
 
@@ -144,10 +141,10 @@ always @(posedge clk) begin
             imag_float = imag_float * N;
             
             if (total_output_count >= N-1) begin
-                $display("Time %0t | Cycle %0d | y[%0d]: Real = %f, Imag = %f", $time, cycle_count, valid_output_count, real_float, imag_float);
+                $display("\nTime %0t | Cycle %0d | y[%0d]: Real = %f, Imag = %f", $time, cycle_count, valid_output_count, real_float, imag_float);
                 valid_output_count <= valid_output_count + 1;    
             end else begin
-                $display("Time %0t | Cycle %0d | Flush Output: Real = %f, Imag = %f", $time, cycle_count, real_float, imag_float);
+                $display("\nTime %0t | Cycle %0d | Flush Output: Real = %f, Imag = %f", $time, cycle_count, real_float, imag_float);
             end
             total_output_count <= total_output_count + 1;
         end
@@ -195,7 +192,7 @@ always @(posedge clk) begin
             // 3. Fetch Golden
             expected_real = golden_real[golden_idx];
             expected_imag = golden_imag[golden_idx];
-            $display("\ngolden_real = %f, golden_imag = %f", expected_real, expected_imag);
+            $display("golden_real = %f, golden_imag = %f", expected_real, expected_imag);
             
 
             // 4. Power Accumulation (Blocking math is required here!)

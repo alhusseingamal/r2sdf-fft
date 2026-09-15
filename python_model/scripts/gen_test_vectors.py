@@ -3,8 +3,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import numpy as np
-from utils.fixed_point_helper import to_fxp
-from config import *
+from utils.my_fxp import to_fxp
 from config import *
 
 def fxp_to_hex(fxp_val):
@@ -12,7 +11,7 @@ def fxp_to_hex(fxp_val):
     Converts an Fxp value to a hexadecimal string (16-bit, 2's complement).
     """
     # Get the raw integer representation
-    raw_int = int(fxp_val.raw())
+    raw_int = int(fxp_val.val)
     # Mask to 16 bits and convert to hex
     hex_val = hex((raw_int & 0xFFFF))[2:].upper().zfill(4)
     return hex_val
@@ -48,32 +47,18 @@ def generate_input_stimulus():
     
     return signal
 
-# def compute_golden_output(input_signal):
-#     """
-#     Compute golden (reference) FFT output using NumPy FFT.
-#     """
-#     # Convert Fxp values back to floats for NumPy FFT
-#     signal_float = np.array([float(s) for s in input_signal])
-    
-#     # Reference result
-#     fft_output = np.fft.fft(signal_float) / M
-    
-#     # Convert to Fxp format
-#     fft_fxp = [to_fxp(val) for val in fft_output]
-    
-#     return fft_fxp
-
-
 def compute_golden_output(input_signal):
     """
-    Compute golden (reference) FFT output using NumPy FFT.
+    Compute frame-by-frame N-point golden FFT output.
     """
-    # Convert Fxp values back to floats for NumPy FFT
     signal_float = np.array([float(s) for s in input_signal])
+    golden = np.zeros(len(signal_float), dtype=np.complex64)
     
-    # Reference result
-    fft_output = np.fft.fft(signal_float)
-    return fft_output
+    # Process each N_POINTS frame independently to match the hardware pipeline
+    for i in range(0, len(signal_float), N_POINTS):
+        golden[i : i + N_POINTS] = np.fft.fft(signal_float[i : i + N_POINTS])
+        
+    return golden
 
 def write_hex_file(filename, data_pairs):
     """

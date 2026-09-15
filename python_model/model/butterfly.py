@@ -1,4 +1,4 @@
-from utils.fixed_point_helper import fxp_add, fxp_sub, complex_fxp_mult
+from utils.my_fxp import fxp_add, fxp_sub, complex_fxp_mult
 
 class ComplexFxp:
     """Helper class to hold the Real and Imaginary fixed-point values."""
@@ -14,22 +14,21 @@ def bit_true_butterfly(a, b, twiddle):
     A_out = a + b
     B_out = (a - b) * twiddle
     """
-    # 1. Calculate A_out = a + b
+    # A_out = a + b
     A_out_real = fxp_add(a.real, b.real)
     A_out_imag = fxp_add(a.imag, b.imag)
 
-    # 2. Calculate the intermediate difference (a - b)
+    # Intermediate difference (a - b)
     diff_real = fxp_sub(a.real, b.real)
     diff_imag = fxp_sub(a.imag, b.imag)
 
-    # 3. Calculate B_out = (a - b) * twiddle
-    # MUST use the holistic complex multiplier to match the RTL truncation!
+    # B_out = (a - b) * twiddle
     B_out_real, B_out_imag = complex_fxp_mult(
         diff_real, diff_imag, 
         twiddle.real, twiddle.imag
     )
 
-    # 4. Pack into objects
+    # pack into objects
     A_out = ComplexFxp(A_out_real, A_out_imag)
     B_out = ComplexFxp(B_out_real, B_out_imag)
 

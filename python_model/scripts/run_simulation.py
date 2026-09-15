@@ -7,11 +7,19 @@ from config import *
 from model.sdf_stage import SDFStage
 from model.butterfly import *
 from utils.plotting import *
-from utils.fixed_point_helper import *
+from utils.my_fxp import *
 from config import *
 
 def bit_reverse(val, num_bits):
     return int('{:0{width}b}'.format(val, width=num_bits)[::-1], 2)
+
+def pad_to_multiple_of_n(v, n_points):
+    """Zero-pads signal to the nearest integer multiple of n_points."""
+    remainder = len(v) % n_points
+    if remainder == 0:
+        return v
+    pad_len = n_points - remainder
+    return v + [0.0] * pad_len
 
 def main():
     print("--- Starting Fixed-Point FFT Bit-True Simulation ---")
@@ -27,9 +35,10 @@ def main():
             raw = int(line, 16)                  # parse hex
             if raw & 0x8000:                     # sign bit set?
                 raw -= 0x10000                   # convert to signed
-            signal.append(raw / 256.0)
+            signal.append(raw / float(1 << FRAC_LEN))
     
-    assert (M == len(signal))
+    signal = pad_to_multiple_of_n(signal, N_POINTS)
+    M = len(signal)                             # Update M to reflect the padded length
     print(signal)
 
     print("------------------------ Golden Output signal -------------------------")
@@ -78,9 +87,6 @@ def main():
 
     # Initialize Hardware Pipeline
     stages = [SDFStage(N_POINTS, i) for i in range(NUM_STAGES)]
-    
-
-
 
     
     print("----------------------- Output signal --------------------------")
@@ -155,7 +161,7 @@ def main():
     # plot_time_domain(t, signal)
     # plot_frequency_domain(golden_fft, title="Golden FFT (Floating Point)")
     # plot_frequency_domain(fxp_ordered_fft_output_float, title="Fixed-Point FFT Output")
-    # plot_fft_comparison(golden_fft, fxp_ordered_fft_output_float, title="Golden vs Fixed-Point FFT")
+    plot_fft_comparison(golden_fft, fxp_ordered_fft_output_float, title="Golden vs Fixed-Point FFT")
     print("Simulation Complete.")
 
 if __name__ == "__main__":

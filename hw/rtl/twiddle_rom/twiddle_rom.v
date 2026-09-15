@@ -11,7 +11,7 @@ module twiddle_rom #(
     reg signed [2*W-1:0] rom_data [0 : (N/2)-1];   // real and imaginary parts are packed into one row
 
     // load the pre-calculated twiddle factors from hex file
-    initial begin   // i tried using relative paths but it couldn't be found for some reason
+    initial begin
         $readmemh(`TWIDDLE_FACTORS_FILE, rom_data);
     end
 
