@@ -1,4 +1,5 @@
 module butterfly #(parameter W = 16, parameter F = 8) (
+input clk, input reset_n, input en,
 input signed [W-1:0] a_real, a_imag, 
 input signed [W-1:0] b_real, b_imag, 
 input signed [W-1:0] twiddle_real, twiddle_imag, 
@@ -24,6 +25,7 @@ complex_subtractor  #(.W(W)) sub(
 );
 
 complex_multiplier  #(.W(W), .F(F)) mult(
+    .clk(clk), .reset_n(reset_n), .en(en),
     .a_real(diff_real), .a_imag(diff_imag), 
     .b_real(twiddle_real), .b_imag(twiddle_imag), 
     .out_real(bout_real), .out_imag(bout_imag)

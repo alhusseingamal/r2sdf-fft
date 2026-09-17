@@ -5,8 +5,8 @@ module top_level
     input reset_n, 
     input en, 
 
-    input reg signed [W-1:0] in_real,
-    input reg signed [W-1:0] in_imag,
+    input signed [W-1:0] in_real,
+    input signed [W-1:0] in_imag,
     
     output valid_out,
     output signed [W-1:0] out_real,
@@ -42,6 +42,34 @@ generate
         );
     end
 endgenerate
+
+/*
+
+// The following were an attempt to remove stages of depth d=2 and d=1 (aka last two stages) to eliminate their multipliers and reduce area used
+// From FFT theory, we know that those two stages don't involve any actual multiplications:
+//  - d=2: swap real and imaginary values, and then negate imaginary part
+//  - d=1: multiplication by 1
+// Even though this decreased total number of wires, this, a bit surprisingly, increased total number of cells used (both for ASIC and FPGA flows)
+// Potential Explanation: Yosys already discovers the fact that those two stages are trivial and heavily optimizes them through constant propagation
+// By making them explicit, we limit yosys optimizations and inadvertently increase the total number of cells
+// Note: Of course, there are not effect on speed, since those two stages are not in the critical path
+
+// To use them instead of the generic sdf_stage, simply alter the loop counter in the sdf_stage generate loop to run only up to NUM_STAGEs-2
+
+sdf_stage_d2 #(.N(N), .W(W), .F(F), .STAGE_INDEX(NUM_STAGES-2)) stage_d2(
+    .clk(clk), .reset_n(reset_n), .en(stage_valid[NUM_STAGES-2]), 
+    .in_real(stage_real[(NUM_STAGES-2)*W +: W]), .in_imag(stage_imag[(NUM_STAGES-2)*W +: W]), 
+    .valid_out(stage_valid[(NUM_STAGES-2)+1]), 
+    .out_real(stage_real[((NUM_STAGES-2)+1)*W +: W]), .out_imag(stage_imag[((NUM_STAGES-2)+1)*W +: W])
+);
+
+sdf_stage_d1 #(.N(N), .W(W), .F(F), .STAGE_INDEX(NUM_STAGES-1)) stage_d1(
+    .clk(clk), .reset_n(reset_n), .en(stage_valid[NUM_STAGES-1]), 
+    .in_real(stage_real[(NUM_STAGES-1)*W +: W]), .in_imag(stage_imag[(NUM_STAGES-1)*W +: W]), 
+    .valid_out(stage_valid[(NUM_STAGES-1)+1]), 
+    .out_real(stage_real[((NUM_STAGES-1)+1)*W +: W]), .out_imag(stage_imag[((NUM_STAGES-1)+1)*W +: W])
+);
+*/
 
 assign out_real = stage_real[NUM_STAGES*W +: W];
 assign out_imag  = stage_imag[NUM_STAGES*W +: W];

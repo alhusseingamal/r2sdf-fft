@@ -1,4 +1,5 @@
 module complex_multiplier #(parameter W = 16, parameter F = 8) (
+    input clk, input reset_n, input en,
     input signed [W-1:0] a_real, a_imag,
     input signed [W-1:0] b_real, b_imag,
     output wire signed [W-1:0] out_real, out_imag

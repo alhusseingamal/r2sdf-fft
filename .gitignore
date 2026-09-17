@@ -5,5 +5,5 @@
 **/.venv/
 /dump
 /asic
-/writeup.md
+README.md
 /commands.txt

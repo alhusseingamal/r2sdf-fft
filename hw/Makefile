@@ -10,7 +10,7 @@ FLAGS_LENIENT = --binary -j 0 -Wall --Wpedantic -Wno-lint -Wno-style -Wno-fatal 
 
 # Project Directories
 RTL_DIR = rtl
-INC_DIR = $(RTL_DIR)/include
+INC_DIR = $(RTL_DIR)
 TB_DIR  = tb
 SIM_DIR = sim
 WAVE_DIR = config/gtkwave

@@ -28,10 +28,16 @@ wire select_counter_msb;    // if MSB of counter is 1, we are in Compute Mode, e
 // Twiddle ROM signals
 wire signed [W-1:0] twiddle_real_s, twiddle_imag_s;
 
+/* verilator lint_off WIDTHEXPAND */
 
 // wire [$clog2(N/2)-1:0] rom_addr = (counter % DEPTH) << STAGE_INDEX;
 // OR We use SystemVerilog casting to explicitly truncate the 32-bit math result
-wire [$clog2(N/2)-1:0] rom_addr = $bits(rom_addr)'( (counter % DEPTH) << STAGE_INDEX );
+// wire [$clog2(N/2)-1:0] rom_addr = $bits(rom_addr)'( (counter % DEPTH) << STAGE_INDEX );
+
+// Verilog Style (more compatible with synthesis tools)
+wire [$clog2(N/2)-1:0] rom_addr;
+assign rom_addr = (counter % DEPTH) << STAGE_INDEX;
+/* verilator lint_on WIDTHEXPAND */
 
 // Butterfly signals
 wire signed [W-1:0] a_bf_real_s, a_bf_imag_s;
@@ -54,6 +60,7 @@ stage_twiddles (
 
 butterfly #(.W(W), .F(F))
 bf(
+    .clk(clk), .reset_n(reset_n), .en(en),
     .a_real(buffer_out_real), .a_imag(buffer_out_imag), 
     .b_real(in_real), .b_imag(in_imag), 
     .twiddle_real(twiddle_real_s), .twiddle_imag(twiddle_imag_s), 

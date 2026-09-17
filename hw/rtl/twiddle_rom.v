@@ -1,3 +1,4 @@
+`include "definitions.vh"
 module twiddle_rom #(
     parameter W = 16,
     parameter N = 8
