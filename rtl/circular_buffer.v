@@ -1,7 +1,5 @@
 module circular_buffer #(parameter W = 16, DEPTH = 4) (
-    input clk, 
-    input reset_n, 
-    input en, 
+    input clk, input reset_n, input en, 
 
     input signed [W-1:0] in_real, 
     input signed [W-1:0] in_imag, 
@@ -41,11 +39,11 @@ generate
         // Block 2: BRAM interface (synchronous reads and writes, no async resets)
         always @(posedge clk) begin
             if (en == 1'b1) begin
-                mem_real[lookahead_addr] <= in_real;
-                mem_imag[lookahead_addr] <= in_imag;
+                mem_real[ptr] <= in_real;
+                mem_imag[ptr] <= in_imag;
 
-                out_real <= mem_real[lookahead_addr+1];
-                out_imag <= mem_imag[lookahead_addr+1];
+                out_real <= mem_real[lookahead_addr];
+                out_imag <= mem_imag[lookahead_addr];
             end
         end
     end

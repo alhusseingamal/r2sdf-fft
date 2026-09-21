@@ -1,5 +1,5 @@
 module top_level 
-#(parameter N = 8, parameter W = 16, parameter F = 8) 
+#(parameter N = 8, parameter W = 16, parameter F = 14) 
 (
     input clk, 
     input reset_n, 
@@ -31,9 +31,11 @@ assign stage_real[0 +: W] = in_real;
 assign stage_imag[0 +: W] = in_imag;
 assign stage_valid[0] = en;
 
+// For N = 8 (or lower), the hardcoded stages are used for resource saving. In that case, the generate loop is skipped
+// For N > 8 (e.g. 16,64,1024), the generate loop is executed.
 genvar i;
 generate
-    for (i = 0; i < NUM_STAGES; i = i+1) begin : stage_gen
+    for (i = 0; i < NUM_STAGES-3; i = i+1) begin : stage_gen
         sdf_stage #(.N(N), .W(W), .F(F), .STAGE_INDEX(i)) stage_inst(
             .clk(clk), .reset_n(reset_n), .en(stage_valid[i]), 
             .in_real(stage_real[i*W +: W]), .in_imag(stage_imag[i*W +: W]), 
@@ -43,18 +45,13 @@ generate
     end
 endgenerate
 
-/*
-
-// The following were an attempt to remove stages of depth d=2 and d=1 (aka last two stages) to eliminate their multipliers and reduce area used
-// From FFT theory, we know that those two stages don't involve any actual multiplications:
-//  - d=2: swap real and imaginary values, and then negate imaginary part
-//  - d=1: multiplication by 1
-// Even though this decreased total number of wires, this, a bit surprisingly, increased total number of cells used (both for ASIC and FPGA flows)
-// Potential Explanation: Yosys already discovers the fact that those two stages are trivial and heavily optimizes them through constant propagation
-// By making them explicit, we limit yosys optimizations and inadvertently increase the total number of cells
-// Note: Of course, there are not effect on speed, since those two stages are not in the critical path
-
-// To use them instead of the generic sdf_stage, simply alter the loop counter in the sdf_stage generate loop to run only up to NUM_STAGEs-2
+// important note: this implementation is fixed for Q2.14 fixed point fft
+sdf_stage_d4 #(.N(N), .W(W), .F(F), .STAGE_INDEX(NUM_STAGES-3)) stage_d4(
+    .clk(clk), .reset_n(reset_n), .en(stage_valid[NUM_STAGES-3]), 
+    .in_real(stage_real[(NUM_STAGES-3)*W +: W]), .in_imag(stage_imag[(NUM_STAGES-3)*W +: W]), 
+    .valid_out(stage_valid[(NUM_STAGES-3)+1]), 
+    .out_real(stage_real[((NUM_STAGES-3)+1)*W +: W]), .out_imag(stage_imag[((NUM_STAGES-3)+1)*W +: W])
+);
 
 sdf_stage_d2 #(.N(N), .W(W), .F(F), .STAGE_INDEX(NUM_STAGES-2)) stage_d2(
     .clk(clk), .reset_n(reset_n), .en(stage_valid[NUM_STAGES-2]), 
@@ -69,7 +66,6 @@ sdf_stage_d1 #(.N(N), .W(W), .F(F), .STAGE_INDEX(NUM_STAGES-1)) stage_d1(
     .valid_out(stage_valid[(NUM_STAGES-1)+1]), 
     .out_real(stage_real[((NUM_STAGES-1)+1)*W +: W]), .out_imag(stage_imag[((NUM_STAGES-1)+1)*W +: W])
 );
-*/
 
 assign out_real = stage_real[NUM_STAGES*W +: W];
 assign out_imag  = stage_imag[NUM_STAGES*W +: W];

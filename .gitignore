@@ -1,9 +1,9 @@
 /python_model/venv
-/hw/sim/
+/hw/*
+/sim/
+/fpga/build/
 /.vscode
 **/__pycache__/
 **/.venv/
 /dump
-/asic
-README.md
 /commands.txt

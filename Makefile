@@ -27,7 +27,8 @@ TOP ?= tb_fft_top
 
 # Output Artifacts
 DUMP_FILE = $(SIM_DIR)/dump.vcd
-SAVE_FILE = $(WAVE_DIR)/$(TOP)_view.gtkw
+# SAVE_FILE = $(WAVE_DIR)/$(TOP)_view.gtkw
+SAVE_FILE = debug.gtkw
 
 # Verilator specific flags (Includes the header directory and sets build dir)
 VERILATOR_FLAGS = $(FLAGS) -I$(INC_DIR) --top-module $(TOP) --Mdir $(SIM_DIR)/obj_dir
