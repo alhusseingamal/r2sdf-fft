@@ -151,7 +151,7 @@ Git.
 
 ## 5. Implementation Results
 
-### ASIC: SkyWater 130 nm
+### ASIC: 8-point FFT on SkyWater 130 nm
 
 The ASIC configuration targets the SkyWater `sky130A` PDK and the
 `sky130_fd_sc_hd` standard-cell library through OpenLane 2. The tracked
@@ -159,6 +159,7 @@ The ASIC configuration targets the SkyWater `sky130A` PDK and the
 
 | Metric | Result |
 | --- | ---: |
+| Clock Speed at worst corner | 94.71 MHz |
 | Core bounding-box area | 196,808 $\mu m^2$ (0.1968 $mm^2$) |
 | Standard-cell utilization | 38.9065% |
 | Standard-cell instances | 13,039 |
@@ -172,37 +173,44 @@ The ASIC configuration targets the SkyWater `sky130A` PDK and the
 | Power-grid violations | 0 |
 | Estimated routed wire length | 179,254 $\mu m$ |
 
-The metrics also retain corner-specific timing records. The project summary
-reports a worst-corner post-place-and-route frequency of approximately
-94 MHz, with timing closed across the analyzed corners. The 13 ns OpenLane
-constraint and the positive slack values above are the more directly
-reproducible records in the repository.
+- Timing Closure achieved across all corners; worst-case corner `max_ss_100C_1v60` runs at 94.71 MHz.
+- The nominal corner `nom_tt_025C_1v80` runs at 182.59 MHz.
 
 Timing and routing work focused on high-fanout and slew behavior. The tracked
 `asic/trace_violators.tcl` script traces violating physical instances back to
 their sequential or top-level RTL drivers, which supports targeted RTL
 register cloning and load balancing instead of blind global changes. The ASIC
 configuration also enables post-placement and post-routing timing repair,
-antenna repair, clock-tree synthesis, and KLayout DRC checks.
+antenna repair, clock-tree synthesis, and KLayout DRC checks.  
+
+**Resulting GDS**
+![image](asic/final.png)
+
 
 ### FPGA: Lattice iCE40-HX8K
 
 The FPGA flow uses Yosys, nextpnr-ice40, and icetime for the HX8K in the CT256
 package. The recorded 8-point implementation result is:
-
+#### 8-point FFT
 | Metric | Result |
 | --- | ---: |
 | Logic cells | 1,375 / 7,680 (17%) |
 | Timing estimate | 10.29 ns |
 | Estimated frequency | 97.18 MHz |
 
-The multiplier pipeline restructuring improved the 8-point result from the
-earlier 51 MHz / 32% implementation to approximately 97 MHz / 17%. The same
-approach allowed a recorded 512-point configuration to fit at approximately
-91% utilization and 83 MHz. The generated FPGA reports and bitstream are
-build products and are excluded by `.gitignore`; rerun `make all` in
-`fpga/` to regenerate them.
+- The multiplier pipeline restructuring improved the 8-point result from the
+earlier 51 MHz / 32% implementation to approximately 97 MHz / 17%.
 
+#### 512-point FFT
+| Metric | Result |
+| --- | ---: |
+| Logic cells | 7,032 / 7,680 (91%) |
+| Timing estimate | 12.08 ns |
+| Estimated frequency | 82.79 MHz |
+
+
+#### How to run:
+- If needed, you can simply change the N parameter to your power-of-two of choice in `top_level.v`, then:
 ```bash
 cd fpga
 make all
@@ -221,7 +229,7 @@ Only the relevant tracked source and result directories are listed here.
 │   ├── stimulus/         Checked-in input and twiddle-factor hex files
 │   └── golden/           Checked-in floating-point reference output
 ├── asic/                 OpenLane 2 configuration, metrics, and debug Tcl
-├── fpga/                 iCE40 source constraints and Makefile flow
+├── fpga/                 iCE40 source constraints, Makefile flow, and bitstreams
 └── README.md             This results and implementation record
 ```
 

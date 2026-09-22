@@ -14,6 +14,6 @@
 
 // Input Stream
 `define M 1024
-`define TWIDDLE_FACTORS_FILE "/mnt/data1/DV/projects/r2-sdf-fft/data/stimulus/twiddle.hex"
-`define INPUT_STREAM_FILE   "/mnt/data1/DV/projects/r2-sdf-fft/data/stimulus/input_stream.hex"
-`define GOLDEN_OUTPUT_FILE   "/mnt/data1/DV/projects/r2-sdf-fft/data/golden/expected_output.txt"
+`define TWIDDLE_FACTORS_FILE "../data/stimulus/twiddle.hex"
+`define INPUT_STREAM_FILE   "../data/stimulus/input_stream.hex"
+`define GOLDEN_OUTPUT_FILE   "../data/golden/expected_output.txt"
