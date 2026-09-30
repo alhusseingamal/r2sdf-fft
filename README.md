@@ -201,12 +201,19 @@ package. The recorded 8-point implementation result is:
 - The multiplier pipeline restructuring improved the 8-point result from the
 earlier 51 MHz / 32% implementation to approximately 97 MHz / 17%.
 
-#### 512-point FFT
+#### 16-point FFT
 | Metric | Result |
 | --- | ---: |
-| Logic cells | 7,032 / 7,680 (91%) |
-| Timing estimate | 12.08 ns |
-| Estimated frequency | 82.79 MHz |
+| Logic cells | 4,333 / 7,680 (56%) |
+| Timing estimate | 11.86 ns |
+| Estimated frequency | 84.31 MHz |
+
+#### 32-point FFT
+| Metric | Result |
+| --- | ---: |
+| Logic cells | 7,583 / 7,680 (98%) |
+| Timing estimate | 12.68 ns |
+| Estimated frequency | 78.85 MHz |
 
 
 #### How to run:
@@ -248,3 +255,12 @@ inventory because they are ignored or generated: `sim/`, `fpga/build/`,
 - The ASIC flow requires an OpenLane 2 installation and the SkyWater 130 nm
     PDK. The FPGA flow requires the iCE40 toolchain. Neither toolchain is part
     of this repository.
+
+
+
+## TODO:
+- replace twiddle_rom.v with an asynchronous one like that in iteration 8.1 and get it working
+- basically get 8.1 to work with N=32.
+- Iteration 8.2 is the latest trial and it is an attempt at making iteration 8.1 work, I removed all resets in datapath and optimized some things in sdf_stage but still
+- Removing resets doesn't reduce the cell usage; it merely alters the cell being used.
+- After removing the resets in datapath in complex_multiplier, speed increased. Oddly, after removing them from stages d4,d2,d1, speed decreased a little even slower than the baseline iteration 8.0 for N=16
